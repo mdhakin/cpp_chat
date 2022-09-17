@@ -14,7 +14,6 @@
 using namespace std;
 
 
-
 struct terminal{
 	int id;
 	string name;
