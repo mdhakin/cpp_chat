@@ -11,6 +11,7 @@
 #include <mutex>
 #define MAX_LEN 200
 #define NUM_COLORS 6
+
 using namespace std;
 
 bool exit_flag=false;
@@ -51,11 +52,12 @@ int main(int argc, char *argv[])
 	}
 	signal(SIGINT, catch_ctrl_c);
 	char name[MAX_LEN] = "GUI";
-	//cout<<"Enter your name : ";
-	//cin.getline(name,MAX_LEN);
 	send(client_socket,name,sizeof(name),0);
-
-	cout << colors[NUM_COLORS-1]<<"\n\t*********CHAT ROOM***********"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t*********************************************"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t********                           **********"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t*******  MISTRAS CRAWLER INTERFACE  *********"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t********                            **********"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t*********************************************"<<"\n"<<def_col;
 
 	thread t1(send_message, client_socket);
 	thread t2(recv_message, client_socket);
@@ -96,6 +98,7 @@ int eraseText(int cnt)
 	{
 		cout<<back_space;
 	}	
+	return 0;
 }
 
 // Send message to everyone
@@ -103,7 +106,7 @@ void send_message(int client_socket)
 {
 	while(1)
 	{
-		cout << ">>" << colors[1]<<def_col;
+		cout << colors[1]<<def_col;
 		char str[MAX_LEN];
 		cin.getline(str,MAX_LEN);
 		send(client_socket,str,sizeof(str),0);
@@ -124,12 +127,16 @@ void recv_message(int client_socket)
 	while(1)
 	{
 		if(exit_flag)
+		{
 			return;
+		}
 		char name[MAX_LEN], str[MAX_LEN];
 		int color_code;
 		int bytes_received=recv(client_socket,name,sizeof(name),0);
 		if(bytes_received<=0)
+		{
 			continue;
+		}
 		cout<< def_col;
 		cout<< name <<endl;
 		fflush(stdout);
