@@ -27,6 +27,7 @@ string stats[] = { "sta=","upt=","spd=","dir=","faa","raa","m1t","m2t=","m3t=","
 
 int main(){
 	
+     string relay = stats[3] + " status \n";
      telemitry *read = new telemitry();
      string ff = "";
      read->isFloat = false;
@@ -39,7 +40,7 @@ int main(){
      {
           cout << "Success?" << endl;
      } 
-     cout << read->Name << "\n" << endl;
+     cout << read->Name << relay << "\n" << endl;
      
 	return 0;
 }

@@ -35,6 +35,12 @@ int broadcast_message(int num, int sender_id);
 void end_connection(int id);
 void handle_client(int client_socket, int id);
 
+//string main_loop(string input);
+int broadcast_message_to_sender(string message, int sender_id);
+int broadcast_message_to_sender(int num, int sender_id);
+//void loop(int client_sock);
+void sendResponse(string message, int sender_id);
+
 int main(int argc, char *argv[]){
 	
 	if(argc < 3)
@@ -99,6 +105,25 @@ int broadcast_message(string message, int sender_id){
 	strcpy(temp,message.c_str());
 	for(int i=0; i<clients.size(); i++){
 		if(clients[i].id!=sender_id) send(clients[i].socket,temp,sizeof(temp),0);
+		//if(true) send(clients[i].socket,temp,sizeof(temp),0);
+	}		
+}
+
+// Broadcast message to the sender
+int broadcast_message_to_sender(string message, int sender_id){
+	char temp[MAX_LEN];
+	strcpy(temp,message.c_str());
+	for(int i=0; i<clients.size(); i++){
+		if(clients[i].id==sender_id) send(clients[i].socket,temp,sizeof(temp),0);
+		
+	}		
+}
+
+// Broadcast a number to the sender
+int broadcast_message_to_sender(int num, int sender_id){
+	for(int i=0; i<clients.size(); i++){
+		if(clients[i].id==sender_id) send(clients[i].socket,&num,sizeof(num),0);
+		
 	}		
 }
 
@@ -106,6 +131,7 @@ int broadcast_message(string message, int sender_id){
 int broadcast_message(int num, int sender_id){
 	for(int i=0; i<clients.size(); i++){
 		if(clients[i].id!=sender_id) send(clients[i].socket,&num,sizeof(num),0);
+		//if(true) send(clients[i].socket,&num,sizeof(num),0);
 	}		
 }
 
@@ -135,23 +161,86 @@ void handle_client(int client_socket, int id){
 	
 	while(true){
 		int bytes_received=recv(client_socket,str,sizeof(str),0);
+		
 		if(bytes_received<=0)
 			return;
-		if(strcmp(str,"#exit")==0){
+		
+		if(strcmp(str,"#exit")==0 || strcmp(str,"e")==0){
 			// Display leaving message
 			string message=string(name)+string(" has left");		
-			broadcast_message("#NULL",id);			
-			broadcast_message(id,id);						
-			broadcast_message(message,id);
 			shared_print(color(id)+message+def_col);
 			end_connection(id);							
 			return;
 		}
-		broadcast_message(string(name),id);					
-		broadcast_message(id,id);		
-		broadcast_message(string(str),id);
-		shared_print(color(id)+name+" : "+def_col+str);		
+
+		sendResponse((string)str, id);
+		shared_print(color(id)+name+" : "+def_col+str);	
+		
+
 	}	
 }
 
+void sendResponse(string message, int sender_id)
+{
+	char temp1[MAX_LEN];
+	strcpy(temp1,message.c_str());
+	string response = "-No Data-";
+	if (strcmp(temp1,"mtr1t")==0)
+	{
+		response = "140";
+	}else if (strcmp(temp1,"mtr2t")==0)
+	{
+		response = "180";
+	}else if (strcmp(temp1,"mtr3t")==0)
+	{
+		response = "110";
+	}else if (strcmp(temp1,"mtr4t")==0)
+	{
+		response = "280";
+	}else if (strcmp(temp1,"spd")==0)
+	{
+		response = "3 in/sec";
+	}else if (strcmp(temp1,"dir")==0)
+	{
+		response = "fwd";
+	}else if (strcmp(temp1,"ang")==0)
+	{
+		response = "2 degrees";
+	}else if (strcmp(temp1,"volt")==0)
+	{
+		response = "51.56 volt";
+	}else if (strcmp(temp1,"fax")==0)
+	{
+		response = "+3 degrees";
+	}else if (strcmp(temp1,"rax")==0)
+	{
+		response = "-2 degrees";
+	}else if (strcmp(temp1,"state")==0)
+	{
+		response = "scanning";
+	}else if (strcmp(temp1,"clicks")==0)
+	{
+		response = "21523";
+	}else if (strcmp(temp1,"mtrmode")==0)
+	{
+		response = "velocity";
+	}else if (strcmp(temp1,"uptime")==0)
+	{
+		response = "2345 seconds";
+	}else if (strcmp(temp1,"cmd")==0)
+	{
+		response = "\n>>mtr1t \t : [motor 1 temp]\n>>mtr2t \t : [motor temp]\n>>mtr3t \t : [motor 3 temp]\n>>mtr4t \t : [motor 4 temp]\n>>spd \t\t : [speed]\n>>dir \t\t : [direction]\n>>ang \t\t : [crawler angle]\n>>volt \t\t : [Batter Voltage]\n";
+	}
 
+	char temp[MAX_LEN];
+	strcpy(temp,response.c_str());
+	for(int i=0; i<clients.size(); i++){
+	char tName[MAX_LEN];
+	strcpy(tName,clients[i].name.c_str());
+	broadcast_message_to_sender(">>" + string(temp),sender_id);
+	shared_print(color(sender_id)+tName+" : "+def_col+temp);	
+		
+		
+	}
+			
+}

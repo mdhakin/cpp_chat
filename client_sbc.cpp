@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
 	client.sin_family=AF_INET;
 	client.sin_port=htons(atoi(argv[2])); // Port no. of server
 	client.sin_addr.s_addr = inet_addr (argv[1]);;
-	//client.sin_addr.s_addr=INADDR_ANY;
 	bzero(&client.sin_zero,0);
 	if(argc > 2)
      {
@@ -134,9 +133,18 @@ void recv_message(int client_socket)
 		recv(client_socket,str,sizeof(str),0);
 		eraseText(6);
 		if(strcmp(name,"#NULL")!=0)
-			cout<<color(color_code)<<name<<" : "<<def_col<<str<<endl;
+		{
+			// when another user says something
+			cout<<color(color_code)<<name<<" : "<<def_col<<str<< endl;
+		}
 		else
-			cout<<color(color_code)<<str<<endl;
+		{
+			// Message from the server
+			cout<<color(color_code)<<str<< endl;
+		}
+
+
+
 		cout<<colors[1]<<"You : "<<def_col;
 		fflush(stdout);
 	}	

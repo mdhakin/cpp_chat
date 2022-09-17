@@ -37,7 +37,6 @@ int main(int argc, char *argv[])
 	client.sin_family=AF_INET;
 	client.sin_port=htons(atoi(argv[2])); // Port no. of server
 	client.sin_addr.s_addr = inet_addr (argv[1]);;
-	//client.sin_addr.s_addr=INADDR_ANY;
 	bzero(&client.sin_zero,0);
 	if(argc > 2)
      {
@@ -51,9 +50,9 @@ int main(int argc, char *argv[])
 		exit(-1);
 	}
 	signal(SIGINT, catch_ctrl_c);
-	char name[MAX_LEN];
-	cout<<"Enter your name : ";
-	cin.getline(name,MAX_LEN);
+	char name[MAX_LEN] = "GUI";
+	//cout<<"Enter your name : ";
+	//cin.getline(name,MAX_LEN);
 	send(client_socket,name,sizeof(name),0);
 
 	cout << colors[NUM_COLORS-1]<<"\n\t*********CHAT ROOM***********"<<"\n"<<def_col;
@@ -104,11 +103,11 @@ void send_message(int client_socket)
 {
 	while(1)
 	{
-		cout<<colors[1]<<"You : "<<def_col;
+		cout << ">>" << colors[1]<<def_col;
 		char str[MAX_LEN];
 		cin.getline(str,MAX_LEN);
 		send(client_socket,str,sizeof(str),0);
-		if(strcmp(str,"#exit")==0)
+		if(strcmp(str,"#exit")==0 || strcmp(str,"e")==0)
 		{
 			exit_flag=true;
 			t_recv.detach();	
@@ -117,6 +116,7 @@ void send_message(int client_socket)
 		}	
 	}		
 }
+
 
 // Receive message
 void recv_message(int client_socket)
@@ -130,14 +130,8 @@ void recv_message(int client_socket)
 		int bytes_received=recv(client_socket,name,sizeof(name),0);
 		if(bytes_received<=0)
 			continue;
-		recv(client_socket,&color_code,sizeof(color_code),0);
-		recv(client_socket,str,sizeof(str),0);
-		eraseText(6);
-		if(strcmp(name,"#NULL")!=0)
-			cout<<color(color_code)<<name<<" : "<<def_col<<str<<endl;
-		else
-			cout<<color(color_code)<<str<<endl;
-		cout<<colors[1]<<"You : "<<def_col;
+		cout<< def_col;
+		cout<< name <<endl;
 		fflush(stdout);
 	}	
 }
