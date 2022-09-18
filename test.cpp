@@ -4,6 +4,8 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <vector>
+#include <chrono>
+#include <iostream>
 
 using namespace std;
 
@@ -22,12 +24,12 @@ enum appState
 	scanning,
 	calibrating
 };
-
-string stats[] = { "sta=","upt=","spd=","dir=","faa","raa","m1t","m2t=","m3t=","m4t=","til=","err=" };
+long timeit();
+//string stats[] = { "sta=","upt=","spd=","dir=","faa","raa","m1t","m2t=","m3t=","m4t=","til=","err=" };
 
 int main(){
 	
-     string relay = stats[3] + " status \n";
+     /* string relay = stats[3] + " status \n";
      telemitry *read = new telemitry();
      string ff = "";
      read->isFloat = false;
@@ -40,9 +42,54 @@ int main(){
      {
           cout << "Success?" << endl;
      } 
-     cout << read->Name << relay << "\n" << endl;
+     cout << read->Name << relay << "\n" << endl; */
      
+
+
+     namespace sc = std::chrono;
+     auto time = sc::system_clock::now();
+     auto since_epoch = time.time_since_epoch();
+     auto millis = sc::duration_cast<sc::milliseconds>(since_epoch);
+     long now = millis.count();
+
+
 	return 0;
 }
 
+long timeit()
+{
+    
+     return now;
+}
 
+void loopforawhile()
+{
+long ct = 0;
+     while(1)
+     {
+          long val = timeit();
+          long diff = val - ct;
+          if (diff > 1000000)
+          {
+               break;
+          }
+          ct = val;
+     }
+     cout << ct << endl;
+}
+
+
+class terminalDisplay
+{
+
+     public:
+     
+     string textToDisplay;
+     string formatText(string iput);
+
+}
+
+terminalDisplay::formatText(string iput)
+{
+     
+}

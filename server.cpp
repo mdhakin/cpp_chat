@@ -82,7 +82,7 @@ int main(int argc, char *argv[]){
 	unsigned int len=sizeof(sockaddr_in);
 	cout << colors[NUM_COLORS-1]<<"\n\t*************************************************"<<"\n"<<def_col;
 	cout << colors[NUM_COLORS-1]<<"\n\t********                              ***********"<<"\n"<<def_col;
-	cout << colors[NUM_COLORS-1]<<"\n\t*******  MISTRAS NDT CRAWLER INTERFAC  **********"<<"\n"<<def_col;
+	cout << colors[NUM_COLORS-1]<<"\n\t*******  MISTRAS NDT CRAWLER INTERFACE  *********"<<"\n"<<def_col;
 	cout << colors[NUM_COLORS-1]<<"\n\t********                              ***********"<<"\n"<<def_col;
 	cout << colors[NUM_COLORS-1]<<"\n\t*************************************************"<<"\n"<<def_col;
 
@@ -135,7 +135,7 @@ int broadcast_message(string message, int sender_id)
 	strcpy(temp,message.c_str());
 	for(int i=0; i<clients.size(); i++)
 	{
-		if(clients[i].id!=sender_id) send(clients[i].socket,temp,sizeof(temp),0);
+		if(clients[i].id==sender_id) send(clients[i].socket,temp,sizeof(temp),0);
 	}
 	return 0;		
 }
@@ -169,7 +169,7 @@ int broadcast_message_to_sender(int num, int sender_id)
 // Broadcast a number to all clients except the sender
 int broadcast_message(int num, int sender_id){
 	for(int i=0; i<clients.size(); i++){
-		if(clients[i].id!=sender_id) send(clients[i].socket,&num,sizeof(num),0);
+		if(clients[i].id==sender_id) send(clients[i].socket,&num,sizeof(num),0);
 		
 	}	
 	return 0;	
@@ -194,9 +194,7 @@ void handle_client(int client_socket, int id){
 
 	// Display welcome message
 	string welcome_message=string(name)+string(" has joined");
-	broadcast_message("#NULL",id);	
-	broadcast_message(id,id);								
-	broadcast_message(welcome_message,id);	
+	
 	shared_print(color(id)+welcome_message+def_col);
 	
 	while(true){
@@ -246,12 +244,12 @@ void sendResponse(string message, int sender_id)
 	}else if (strcmp(temp1,"volt")==0)
 	{
 		response = "51.56 volt";
-	}else if (strcmp(temp1,"fax")==0)
+	}else if (strcmp(temp1,"err")==0)
 	{
-		response = "+3 degrees";
-	}else if (strcmp(temp1,"rax")==0)
+		response = "no errors";
+	}else if (strcmp(temp1,"torque")==0)
 	{
-		response = "-2 degrees";
+		response = "54";
 	}else if (strcmp(temp1,"state")==0)
 	{
 		response = "scanning";
@@ -264,9 +262,10 @@ void sendResponse(string message, int sender_id)
 	}else if (strcmp(temp1,"uptime")==0)
 	{
 		response = "2345 seconds";
-	}else if (strcmp(temp1,"cmd")==0)
+	}else if (strcmp(temp1,"info")==0)
 	{
-		response = "\n>>mtr1t \t [motor 1 temp]\n>>mtr2t \t [motor temp]\n>>mtr3t \t [motor 3 temp]\n>>mtr4t \t [motor 4 temp]\n>>spd \t\t [speed]\n>>dir \t\t [direction]\n>>ang \t\t [crawler angle]\n>>volt \t\t [Batter Voltage]\n";
+		string output = "";
+		response = "Gen 5.2 ser XX5tcxcvvdv";
 	}
 
 	char temp[MAX_LEN];
